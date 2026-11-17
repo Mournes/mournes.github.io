@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Mournes is an independent collection of free browser games.">
+<meta name="theme-color" content="#0c100e">
+<title>Mournes</title>
+
+<style>
+:root {
+    --bg: #0c100e;
+    --panel: #141b17;
+    --border: #25332b;
+    --accent: #55d69a;
+    --text: #edf4ef;
+    --muted: #8b9c92;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    color-scheme: dark;
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 5%;
+    background: #0c100ef5;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.version {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+main {
+    max-width: 1500px;
+    margin: auto;
+    padding: 30px 5%;
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: linear-gradient(160deg, #192e23, #0c1711);
+    text-align: center;
+}
+
+.mountains {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-content {
+    position: relative;
+    padding: 25px;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(36px, 8vw, 76px);
+    letter-spacing: 0.14em;
+    font-weight: 900;
+}
+
+.hero p {
+    color: #acd9be;
+    letter-spacing: 4px;
+    font-size: 12px;
+}
+
+.search {
+    width: 100%;
+    margin-top: 30px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 16px;
+    outline: none;
+}
+
+.search:focus {
+    border-color: var(--accent);
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0 30px;
+}
+
+.filter {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--muted);
+    padding: 10px 16px;
+    transition: 0.15s;
+}
+
+.filter:hover, .filter.active {
+    background: #203d2e;
+    color: var(--accent);
+    border-color: #376b50;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#count {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.library {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill, minmax(min(100%, 210px), 1fr)
+    );
+    gap: 18px;
+}
+
+.game {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    transition: transform 0.18s, border-color 0.18s;
+}
+
+.game:hover {
+    transform: translateY(-4px);
+    border-color: #468563;
+}
+
+.thumbnail {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    font-size: 54px;
+}
+
+.favourite {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    border: 0;
+    background: #0008;
+    color: white;
+    font-size: 21px;
+}
+
+.favourite.saved {
+    color: var(--accent);
+}
+
+.game-info {
+    padding: 15px;
+}
+
+.game-info h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+}
+
+.game-info p {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 0 0 15px;
+}
+
+.play {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    background: #203d2e;
+    color: var(--accent);
+    border: 1px solid #376b50;
+}
+
+.play:hover:not(:disabled) {
+    background: var(--accent);
+    color: #0c100e;
+}
+
+.play:disabled {
+    background: #1c2320;
+    color: var(--muted);
+    border-color: var(--border);
+    cursor: default;
+}
+
+.empty {
+    color: var(--muted);
+    padding: 25px 0;
+}
+
+footer {
+    margin-top: 55px;
+    padding: 25px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+dialog {
+    width: min(700px, 94vw);
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+dialog::backdrop {
+    background: #000c;
+}
+
+.game-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+#arena {
+    position: relative;
+    height: min(340px, 45vh);
+    min-height: 180px;
+    margin: 20px 0;
+    background: #0b120e;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#target {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 25px #55d69555;
+}
+
+#target[hidden] {
+    display: none;
+}
+
+.close {
+    background: transparent;
+    color: var(--text);
+    border: 0;
+    font-size: 24px;
+}
+
+@media (max-width: 600px) {
+    .hero {
+        min-height: 220px;
+    }
+
+    .library {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .brand {
+        font-size: 17px;
+    }
+
+    .game-info {
+        padding: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <svg width="42" height="34" viewBox="0 0 48 38"
+             aria-hidden="true">
+            <path d="M2 34 L17 10 L25 21 L33 4 L46 34 Z"
+                  fill="none"
+                  stroke="#55d69a"
+                  stroke-width="2.4"
+                  stroke-linejoin="round"/>
+        </svg>
+        MOURNES
+    </div>
+    <span class="version">v0.1 ALPHA</span>
+</header>
+
+<main>
+    <section class="hero">
+        <svg class="mountains" viewBox="0 0 1200 340"
+             preserveAspectRatio="xMidYMax slice"
+             aria-hidden="true">
+            <path d="M0 300 L180 140 L280 220 L450 45 L600 200
+                     L760 65 L970 230 L1100 110 L1200 230 V340 H0Z"
+                  fill="#203c2d"/>
+            <path d="M0 340 L190 230 L360 300 L570 150 L800 290
+                     L990 210 L1200 310 V340 H0Z"
+                  fill="#16291e"/>
+            <path d="M0 340 L220 295 L420 330 L660 250 L900 320
+                     L1200 265 V340Z"
+                  fill="#102017"/>
+        </svg>
+
+        <div class="hero-content">
+            <h1>MOURNES</h1>
+            <p>EXPLORE. PLAY. REPEAT.</p>
+        </div>
+    </section>
+
+    <input id="search" class="search" type="search"
+           aria-label="Search the library"
+           placeholder="Search the library..." autocomplete="off">
+
+    <nav id="filters" class="filters" aria-label="Library categories"></nav>
+
+    <div class="section-heading">
+        <h2 id="heading">Explore</h2>
+        <span id="count"></span>
+    </div>
+
+    <section class="library" id="library"></section>
+
+    <footer>
+        MOURNES &copy; 2026 &middot; v0.1 ALPHA
+    </footer>
+</main>
+
+<dialog id="gameDialog">
+    <div class="game-toolbar">
+        <strong>Summit Reflex</strong>
+        <button class="close" id="closeGame"
+                aria-label="Close game">&times;</button>
+    </div>
+    <p>Hit as many targets as possible in 15 seconds.</p>
+    <div class="game-toolbar">
+        <span id="score">Score: 0</span>
+        <span id="time">Time: 15s</span>
+        <span id="best">Best: 0</span>
+    </div>
+    <div id="arena">
+        <button id="target" aria-label="Hit target" hidden></button>
+    </div>
+    <button id="startGame" class="play">Start</button>
+</dialog>
+
+<script>
+"use strict";
+
+const games = [
+    {
+        id: "summit-reflex",
+        name: "Summit Reflex",
+        category: "Arcade",
+        icon: "🎯",
+        colour: "#224b36",
+        available: true
+    },
+    {
+        id: "voxel",
+        name: "Voxel Sandbox",
+        category: "Sandbox",
+        icon: "🧊",
+        colour: "#29472a",
+        available: false
+    },
+    {
+        id: "racer",
+        name: "Street Racer",
+        category: "Racing",
+        icon: "🏎️",
+        colour: "#57372b",
+        available: false
+    },
+    {
+        id: "survival",
+        name: "Survival",
+        category: "Action",
+        icon: "⚔️",
+        colour: "#492828",
+        available: false
+    },
+    {
+        id: "skate",
+        name: "Skate Park",
+        category: "Sports",
+        icon: "🛹",
+        colour: "#2b3c54",
+        available: false
+    },
+    {
+        id: "space",
+        name: "Space Assault",
+        category: "Action",
+        icon: "🚀",
+        colour: "#382b52",
+        available: false
+    },
+    {
+        id: "dungeon",
+        name: "Dungeon",
+        category: "Adventure",
+        icon: "🏰",
+        colour: "#49402c",
+        available: false
+    }
+];
+
+const categories = [
+    "All", "Arcade", "Action", "Racing", "Adventure",
+    "Sandbox", "Sports", "Favourites", "Recently played"
+];
+
+function load(key, fallback) {
+    try {
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function save(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+        // The website remains usable without local storage.
+    }
+}
+
+let favourites = load("mournes_favourites", []);
+let recent = load("mournes_recent", []);
+let activeCategory = "All";
+
+const library = document.getElementById("library");
+const search = document.getElementById("search");
+
+function renderFilters() {
+    const filters = document.getElementById("filters");
+    filters.innerHTML = "";
+
+    categories.forEach(category => {
+        const button = document.createElement("button");
+        button.className = "filter";
+        button.textContent = category;
+        button.classList.toggle("active", category === activeCategory);
+        button.setAttribute("aria-pressed", category === activeCategory);
+
+        button.onclick = () => {
+            activeCategory = category;
+            renderFilters();
+            renderGames();
+        };
+
+        filters.appendChild(button);
+    });
+}
+
+function toggleFavourite(id) {
+    if (favourites.includes(id)) {
+        favourites = favourites.filter(item => item !== id);
+    } else {
+        favourites.push(id);
+    }
+
+    save("mournes_favourites", favourites);
+    renderGames();
+}
+
+function renderGames() {
+    const query = search.value.toLowerCase().trim();
+
+    let filtered = games.filter(game => {
+        const matchesSearch =
+            game.name.toLowerCase().includes(query) ||
+            game.category.toLowerCase().includes(query);
+
+        let matchesCategory =
+            activeCategory === "All" ||
+            game.category === activeCategory;
+
+        if (activeCategory === "Favourites") {
+            matchesCategory = favourites.includes(game.id);
+        }
+
+        if (activeCategory === "Recently played") {
+            matchesCategory = recent.includes(game.id);
+        }
+
+        return matchesSearch && matchesCategory;
+    });
+
+    if (activeCategory === "Recently played") {
+        filtered.sort((a, b) =>
+            recent.indexOf(a.id) - recent.indexOf(b.id)
+        );
+    }
+
+    document.getElementById("heading").textContent =
+        activeCategory === "All" ? "Explore" : activeCategory;
+
+    document.getElementById("count").textContent =
+        `${filtered.length} titles`;
+
+    library.innerHTML = "";
+
+    if (!filtered.length) {
+        library.innerHTML = '<p class="empty">Nothing here yet.</p>';
+        return;
+    }
+
+    filtered.forEach(game => {
+        const card = document.createElement("article");
+        const saved = favourites.includes(game.id);
+
+        card.className = "game";
+        card.innerHTML = `
+            <div class="thumbnail" style="background:${game.colour}">
+                <span aria-hidden="true">${game.icon}</span>
+                <button class="favourite ${saved ? "saved" : ""}"
+                    aria-label="Favourite ${game.name}"
+                    aria-pressed="${saved}">
+                    ${saved ? "♥" : "♡"}
+                </button>
+            </div>
+            <div class="game-info">
+                <h3>${game.name}</h3>
+                <p>${game.category}</p>
+                <button class="play" ${game.available ? "" : "disabled"}>
+                    ${game.available ? "Play now" : "Coming soon"}
+                </button>
+            </div>
+        `;
+
+        card.querySelector(".favourite").onclick =
+            () => toggleFavourite(game.id);
+
+        card.querySelector(".play").onclick =
+            () => playGame(game);
+
+        library.appendChild(card);
+    });
+}
+
+function playGame(game) {
+    if (!game.available) return;
+
+    recent = [game.id, ...recent.filter(id => id !== game.id)];
+    save("mournes_recent", recent);
+
+    if (game.id === "summit-reflex") {
+        dialog.showModal();
+    } else if (game.url) {
+        window.location.href = game.url;
+    }
+
+    renderGames();
+}
+
+search.addEventListener("input", renderGames);
+
+// Summit Reflex
+
+const dialog = document.getElementById("gameDialog");
+const arena = document.getElementById("arena");
+const target = document.getElementById("target");
+const start = document.getElementById("startGame");
+
+let score = 0;
+let timer = null;
+let deadline = 0;
+let best = load("mournes_reflex_best", 0);
+
+document.getElementById("best").textContent = `Best: ${best}`;
+
+function moveTarget() {
+    target.style.left =
+        Math.random() * Math.max(0, arena.clientWidth - 48) + "px";
+
+    target.style.top =
+        Math.random() * Math.max(0, arena.clientHeight - 48) + "px";
+}
+
+function finishGame() {
+    clearInterval(timer);
+    timer = null;
+    target.hidden = true;
+    start.disabled = false;
+    start.textContent = "Play again";
+
+    if (score > best) {
+        best = score;
+        save("mournes_reflex_best", best);
+    }
+
+    document.getElementById("best").textContent = `Best: ${best}`;
+}
+
+start.onclick = () => {
+    score = 0;
+    deadline = performance.now() + 15000;
+
+    document.getElementById("score").textContent = "Score: 0";
+    document.getElementById("time").textContent = "Time: 15s";
+
+    start.disabled = true;
+    target.hidden = false;
+    moveTarget();
+
+    timer = setInterval(() => {
+        const remaining = Math.max(
+            0, Math.ceil((deadline - performance.now()) / 1000)
+        );
+
+        document.getElementById("time").textContent =
+            `Time: ${remaining}s`;
+
+        if (remaining === 0) finishGame();
+    }, 100);
+};
+
+target.onclick = () => {
+    if (!timer) return;
+
+    if (performance.now() >= deadline) {
+        finishGame();
+        return;
+    }
+
+    score++;
+    document.getElementById("score").textContent = `Score: ${score}`;
+    moveTarget();
+};
+
+document.getElementById("closeGame").onclick = () => dialog.close();
+
+dialog.addEventListener("close", () => {
+    if (timer) finishGame();
+});
+
+renderFilters();
+renderGames();
+</script>
+
+</body>
+</html>
